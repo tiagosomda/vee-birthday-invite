@@ -61,12 +61,76 @@
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     }
+
+    .calendar-section {
+      margin-top: 40px;
+      width: 100%;
+      max-width: 640px;
+      text-align: center;
+    }
+
+    .calendar-section h2 {
+      font-size: 1.2rem;
+      font-weight: normal;
+      color: #1a1a1a;
+      margin-bottom: 16px;
+      letter-spacing: 0.03em;
+    }
+
+    .calendar-buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .calendar-btn {
+      display: inline-block;
+      padding: 10px 20px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-family: Georgia, serif;
+      font-size: 0.9rem;
+      background: #fff;
+      color: #1a1a1a;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      transition: box-shadow 0.15s;
+    }
+
+    .calendar-btn:hover {
+      box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+    }
+
+    .pool-note {
+      margin-top: 40px;
+      width: 100%;
+      max-width: 640px;
+      background: rgba(255,255,255,0.55);
+      border-radius: 8px;
+      padding: 20px 24px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: #1a1a1a;
+    }
   </style>
 </head>
 <body>
 
   <div class="photo-container">
     <img src="vee-sunshine-picture-v001.jpg" alt="Vee">
+  </div>
+
+  <div class="calendar-section">
+    <h2>Add to your calendar</h2>
+    <div class="calendar-buttons">
+      <a class="calendar-btn" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Valentina%27s+Birthday&dates=20260614T140000%2F20260614T180000&details=Pool+opens+at+4pm%21+Please+include+the+names+of+everyone+in+your+group+who%27ll+be+swimming+%E2%80%94+we+need+to+add+them+to+the+HOA+guest+list+in+advance.&location=200+Loch+Highlands+Drive%2C+Cary%2C+NC+27518&ctz=America%2FNew_York" target="_blank" rel="noopener">Google Calendar</a>
+      <a class="calendar-btn" href="vee-birthday.ics">Apple Calendar</a>
+      <a class="calendar-btn" href="https://outlook.live.com/calendar/0/deeplink/compose?subject=Valentina%27s+Birthday&startdt=2026-06-14T14%3A00%3A00&enddt=2026-06-14T18%3A00%3A00&body=Pool+opens+at+4pm%21+Please+include+the+names+of+everyone+in+your+group+who%27ll+be+swimming+%E2%80%94+we+need+to+add+them+to+the+HOA+guest+list+in+advance.&location=200+Loch+Highlands+Drive%2C+Cary%2C+NC+27518" target="_blank" rel="noopener">Outlook</a>
+    </div>
+  </div>
+
+  <div class="pool-note">
+    Planning to use the pool? It opens at 4pm! Since we need to submit guest names to the HOA in advance, please include the names of everyone in your group who'll be swimming when you fill out the RSVP below.
   </div>
 
   <div class="form-container">
