@@ -20,6 +20,9 @@
   <meta name="twitter:title" content="Valentina's First Birthday">
   <meta name="twitter:description" content="You're invited to celebrate Valentina's first birthday!">
   <meta name="twitter:image" content="http://www.tiago.dev/vee-birthday-invite/preview.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
   <style>
     * {
       box-sizing: border-box;
@@ -28,8 +31,8 @@
     }
 
     body {
-      background-color: #49ECFB;
-      font-family: Georgia, serif;
+      background-color: #FFE8D0;
+      font-family: 'Roboto', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -70,9 +73,15 @@
     }
 
     .calendar-section h2 {
-      font-size: 1.2rem;
-      font-weight: normal;
-      color: #1a1a1a;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.4rem;
+      color: #DEBC51;
+      text-shadow:
+        -1px -1px 0 #000,
+         1px -1px 0 #000,
+        -1px  1px 0 #000,
+         1px  1px 0 #000,
+         2px  3px 6px #03A9F4;
       margin-bottom: 16px;
       letter-spacing: 0.03em;
     }
@@ -91,7 +100,7 @@
       padding: 10px 18px;
       border-radius: 8px;
       text-decoration: none;
-      font-family: Georgia, serif;
+      font-family: 'Roboto', sans-serif;
       font-size: 0.9rem;
       transition: box-shadow 0.15s, transform 0.1s;
     }
@@ -107,48 +116,161 @@
     }
 
     .calendar-btn.gcal {
-      background: #fff;
-      color: #3c4043;
-      border: 1px solid #dadce0;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      background: #fce8e6;
+      color: #6b1a15;
+      border: 1px solid #f5c6c2;
+      box-shadow: 0 1px 4px rgba(234,67,53,0.12);
     }
 
     .calendar-btn.gcal:hover {
-      box-shadow: 0 3px 10px rgba(66,133,244,0.25);
+      box-shadow: 0 3px 10px rgba(234,67,53,0.22);
     }
 
     .calendar-btn.acal {
-      background: #fff;
-      color: #1c1c1e;
-      border: 1px solid #e5e5ea;
-      box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+      background: #1c1c1e;
+      color: #fff;
+      border: none;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
     }
 
     .calendar-btn.acal:hover {
-      box-shadow: 0 3px 10px rgba(255,59,48,0.2);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.4);
     }
 
     .calendar-btn.outlook {
-      background: #0078D4;
-      color: #fff;
-      border: none;
-      box-shadow: 0 1px 4px rgba(0,120,212,0.35);
+      background: #cce4f7;
+      color: #004578;
+      border: 1px solid #a8d2f0;
+      box-shadow: 0 1px 4px rgba(0,120,212,0.15);
     }
 
     .calendar-btn.outlook:hover {
-      box-shadow: 0 3px 10px rgba(0,120,212,0.45);
+      box-shadow: 0 3px 10px rgba(0,120,212,0.25);
     }
 
     .pool-note {
       margin-top: 40px;
       width: 100%;
       max-width: 640px;
-      background: rgba(255,255,255,0.55);
+      background: #03A9F4;
       border-radius: 8px;
       padding: 20px 24px;
-      font-size: 0.95rem;
+      color: #fff;
+    }
+
+    .pool-note-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .pool-note-header svg {
+      flex-shrink: 0;
+      opacity: 0.9;
+    }
+
+    .pool-note-title {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.15rem;
+      letter-spacing: 0.02em;
+    }
+
+    .pool-note-highlight {
+      font-size: 0.9rem;
+      font-weight: 700;
+      background: rgba(255,255,255,0.25);
+      border-radius: 5px;
+      padding: 6px 12px;
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+
+    .pool-note-body {
+      font-size: 0.88rem;
       line-height: 1.6;
-      color: #1a1a1a;
+      opacity: 0.95;
+    }
+
+    .rsvp-prompt {
+      margin-top: 40px;
+      width: 100%;
+      max-width: 640px;
+      text-align: center;
+    }
+
+    .rsvp-prompt h2 {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.6rem;
+      color: #c45c00;
+      margin-bottom: 20px;
+      letter-spacing: 0.02em;
+    }
+
+    .rsvp-buttons {
+      display: flex;
+      gap: 14px;
+      justify-content: center;
+    }
+
+    .rsvp-btn {
+      padding: 12px 36px;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.15s;
+    }
+
+    .rsvp-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .rsvp-btn.yes {
+      background: #f97316;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(249,115,22,0.35);
+    }
+
+    .rsvp-btn.yes:hover {
+      box-shadow: 0 4px 14px rgba(249,115,22,0.45);
+    }
+
+    .rsvp-btn.no {
+      background: #fff;
+      color: #666;
+      border: 1px solid #ddd;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+    }
+
+    .rsvp-btn.no:hover {
+      box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+    }
+
+    .rsvp-decline {
+      margin-top: 40px;
+      width: 100%;
+      max-width: 640px;
+      text-align: center;
+      display: none;
+    }
+
+    .rsvp-decline p {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.3rem;
+      color: #c45c00;
+    }
+
+    .rsvp-decline .rsvp-change {
+      margin-top: 12px;
+      background: none;
+      border: none;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.85rem;
+      color: #888;
+      cursor: pointer;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -156,6 +278,47 @@
 
   <div class="photo-container">
     <img src="vee-sunshine-picture-v001.jpg" alt="Vee">
+  </div>
+
+  <div class="pool-note">
+    <div class="pool-note-header">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2 18c1.5 0 2.5-1 4-1s2.5 1 4 1 2.5-1 4-1 2.5 1 4 1" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <path d="M2 21c1.5 0 2.5-1 4-1s2.5 1 4 1 2.5-1 4-1 2.5 1 4 1" stroke="white" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="12" cy="6" r="2.5" fill="white"/>
+        <path d="M12 9v5l-3 2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 14l3 2" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <span class="pool-note-title">Planning to swim?</span>
+    </div>
+    <div class="pool-note-highlight">Pool opens at 4pm</div>
+    <div class="pool-note-body">
+      We need to submit swimmer names to the HOA in advance — please include the full names of everyone in your group who'll be using the pool when you fill out the RSVP below.
+    </div>
+  </div>
+
+  <div class="rsvp-prompt" id="rsvpPrompt">
+    <h2>Will you be joining us?</h2>
+    <div class="rsvp-buttons">
+      <button class="rsvp-btn yes" onclick="rsvp(true)">Yes, we'll be there!</button>
+      <button class="rsvp-btn no" onclick="rsvp(false)">Can't make it</button>
+    </div>
+  </div>
+
+  <div class="rsvp-decline" id="rsvpDecline">
+    <p>We'll miss you — thanks for letting us know!</p>
+    <button class="rsvp-change" onclick="rsvpReset()">Change my answer</button>
+  </div>
+
+  <div id="rsvpYesContent" style="display:none; width:100%;">
+
+  <div class="form-container">
+    <iframe
+      src="https://docs.google.com/forms/d/e/1FAIpQLSc6HYqlCJZPbdqcc2q-BgOXK_lBwXfhZ1yFnUvk2gnz9d3x9g/viewform?embedded=true"
+      height="800"
+      frameborder="0"
+      marginheight="0"
+      marginwidth="0">Loading…</iframe>
   </div>
 
   <div class="calendar-section">
@@ -201,18 +364,28 @@
     </div>
   </div>
 
-  <div class="pool-note">
-    Planning to use the pool? It opens at 4pm! Since we need to submit guest names to the HOA in advance, please include the names of everyone in your group who'll be swimming when you fill out the RSVP below.
-  </div>
+  </div><!-- end rsvpYesContent -->
 
-  <div class="form-container">
-    <iframe
-      src="https://docs.google.com/forms/d/e/1FAIpQLSc6HYqlCJZPbdqcc2q-BgOXK_lBwXfhZ1yFnUvk2gnz9d3x9g/viewform?embedded=true"
-      height="800"
-      frameborder="0"
-      marginheight="0"
-      marginwidth="0">Loading…</iframe>
-  </div>
+  <script>
+    function rsvp(coming) {
+      document.getElementById('rsvpPrompt').style.display = 'none';
+      if (coming) {
+        var el = document.getElementById('rsvpYesContent');
+        el.style.display = 'flex';
+        el.style.flexDirection = 'column';
+        el.style.alignItems = 'center';
+        el.style.width = '100%';
+      } else {
+        document.getElementById('rsvpDecline').style.display = 'block';
+      }
+    }
+
+    function rsvpReset() {
+      document.getElementById('rsvpPrompt').style.display = 'block';
+      document.getElementById('rsvpDecline').style.display = 'none';
+      document.getElementById('rsvpYesContent').style.display = 'none';
+    }
+  </script>
 
 </body>
 </html>
