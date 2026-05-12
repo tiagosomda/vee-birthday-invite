@@ -70,6 +70,11 @@ function fadeIn(el, displayVal) {
 // ── RSVP gate ─────────────────────────────────────────────────────────────
 function rsvp(coming) {
   var prompt = document.getElementById('rsvpPrompt');
+  if (!coming) {
+    pauseAnimation();
+    document.getElementById('declinePhotoWrap').classList.add('active');
+    document.body.style.backgroundColor = '#F6F6F6';
+  }
   fadeOut(prompt, function() {
     if (coming) {
       var el = document.getElementById('rsvpYesContent');
@@ -98,6 +103,11 @@ function rsvpReset() {
   var yesContent = document.getElementById('rsvpYesContent');
   var prompt = document.getElementById('rsvpPrompt');
   var activeEl = (decline.style.display !== 'none' && decline.style.display !== '') ? decline : yesContent;
+  if (activeEl === decline) {
+    document.getElementById('declinePhotoWrap').classList.remove('active');
+    resumeAnimation();
+    document.body.style.backgroundColor = '#EDFCFF';
+  }
   fadeOut(activeEl, function() {
     fadeIn(prompt);
   });
@@ -486,6 +496,9 @@ function adminEsc(str) {
 }
 
 // ── Photo wiggle animation ────────────────────────────────────────────────────
+var animTimerId = null;
+var animStep = 0;
+
 (function() {
   var frames = [
     document.getElementById('frame000'),
@@ -495,17 +508,30 @@ function adminEsc(str) {
   // sequence: center, left, center, right
   var sequence  = [0, 1, 0, 2];
   var durations = [230, 230, 230, 230]; // ms per step
-  var step = 0;
 
   function tick() {
-    var idx = sequence[step];
-    var dur = durations[step];
+    var idx = sequence[animStep];
+    var dur = durations[animStep];
     frames.forEach(function(f, i) { f.classList.toggle('active', i === idx); });
-    step = (step + 1) % sequence.length;
-    setTimeout(tick, dur);
+    animStep = (animStep + 1) % sequence.length;
+    animTimerId = setTimeout(tick, dur);
   }
 
-  window.addEventListener('load', function() { setTimeout(tick, 800); });
+  window.pauseAnimation = function() {
+    clearTimeout(animTimerId);
+    animTimerId = null;
+    frames.forEach(function(f) { f.classList.remove('active'); });
+  };
+
+  window.resumeAnimation = function() {
+    animStep = 0;
+    frames[0].classList.add('active');
+    if (!animTimerId) {
+      animTimerId = setTimeout(tick, 800);
+    }
+  };
+
+  window.addEventListener('load', function() { animTimerId = setTimeout(tick, 800); });
 })();
 
 // ── Form submission ───────────────────────────────────────────────────────────

@@ -34,6 +34,21 @@ body {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
+.decline-photo-wrap {
+  display: none;
+  position: relative;
+}
+
+.decline-photo-wrap.active {
+  display: block;
+}
+
+.decline-photo {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
 .form-container {
   margin-top: 40px;
   width: 100%;
