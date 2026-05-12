@@ -188,14 +188,17 @@ var adminCurrentUser = null;
 
 function showAdmin() {
   var section = document.getElementById('adminSection');
-  section.style.display = 'block';
-  section.scrollIntoView({ behavior: 'smooth' });
+  fadeIn(section);
+  setTimeout(function() {
+    var targetY = window.scrollY + section.getBoundingClientRect().top - 28;
+    smoothScrollTo(targetY, 1500);
+  }, 50);
 }
 
 document.getElementById('adminTrigger').addEventListener('click', showAdmin);
 
 document.getElementById('adminClose').addEventListener('click', function() {
-  document.getElementById('adminSection').style.display = 'none';
+  fadeOut(document.getElementById('adminSection'));
 });
 
 document.getElementById('adminGoogleSignIn').addEventListener('click', function() {
