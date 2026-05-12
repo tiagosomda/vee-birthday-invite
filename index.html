@@ -33,7 +33,7 @@
     }
 
     body {
-      background-color: #FFE8D0;
+      background-color: #EDFCFF;
       font-family: 'Roboto', sans-serif;
       display: flex;
       flex-direction: column;
@@ -66,6 +66,30 @@
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
       padding: 28px 24px;
       width: 100%;
+      position: relative;
+    }
+
+    .form-close {
+      position: absolute;
+      top: 12px;
+      right: 14px;
+      width: 32px;
+      height: 32px;
+      background: #DB3F4A;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.2rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.15s;
+    }
+
+    .form-close:hover {
+      opacity: 0.85;
     }
 
     .form-field {
@@ -107,7 +131,7 @@
     }
 
     .form-input:focus {
-      border-color: #EFBC49;
+      border-color: #DB3F4A;
       background: #fff;
     }
 
@@ -163,10 +187,10 @@
     }
 
     .pool-toggle.active {
-      background: #EFBC49;
+      background: #DB3F4A;
       color: #fff;
-      border-color: #EFBC49;
-      box-shadow: 0 3px 10px rgba(239,188,73,0.3);
+      border-color: #DB3F4A;
+      box-shadow: 0 3px 10px rgba(219,63,74,0.3);
     }
 
     .form-error {
@@ -182,7 +206,7 @@
     .rsvp-form-submit {
       width: 100%;
       padding: 13px;
-      background: #EFBC49;
+      background: #DB3F4A;
       color: #fff;
       border: none;
       border-radius: 10px;
@@ -215,7 +239,7 @@
     .thank-you-heading {
       font-family: 'Fredoka', sans-serif;
       font-size: 1.6rem;
-      color: #EFBC49;
+      color: #DB3F4A;
       margin-bottom: 10px;
     }
 
@@ -228,7 +252,7 @@
     .form-heading {
       font-family: 'Fredoka', sans-serif;
       font-size: 1.6rem;
-      color: #EFBC49;
+      color: #DB3F4A;
       margin-bottom: 20px;
       text-align: center;
     }
@@ -247,7 +271,7 @@
     .calendar-section h2 {
       font-family: 'Fredoka', sans-serif;
       font-size: 1.6rem;
-      color: #EFBC49;
+      color: #DB3F4A;
       margin-bottom: 20px;
       text-align: center;
     }
@@ -364,8 +388,8 @@
     }
 
     .add-person-btn:hover {
-      border-color: #EFBC49;
-      color: #EFBC49;
+      border-color: #DB3F4A;
+      color: #DB3F4A;
     }
 
     .pool-note-highlight {
@@ -394,15 +418,26 @@
     .rsvp-prompt h2 {
       font-family: 'Fredoka', sans-serif;
       font-size: 1.6rem;
-      color: #c45c00;
+      color: #DB3F4A;
       margin-bottom: 20px;
-      letter-spacing: 0.02em;
     }
 
     .rsvp-buttons {
       display: flex;
       gap: 14px;
       justify-content: center;
+    }
+
+    @media (max-width: 480px) {
+      .rsvp-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .rsvp-btn {
+        width: 100%;
+        max-width: 320px;
+      }
     }
 
     .rsvp-btn {
@@ -420,7 +455,7 @@
     }
 
     .rsvp-btn.yes {
-      background: #EFBC49;
+      background: #DB3F4A;
       color: #fff;
       box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
@@ -489,6 +524,8 @@
 
   <div class="form-container">
     <form class="rsvp-form" id="rsvpForm" novalidate>
+
+      <button type="button" class="form-close" onclick="rsvpReset()" aria-label="Go back">✕</button>
 
       <h2 class="form-heading">RSVP</h2>
 
