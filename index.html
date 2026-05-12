@@ -107,12 +107,42 @@
     }
 
     .form-input:focus {
-      border-color: #f97316;
+      border-color: #EFBC49;
       background: #fff;
     }
 
-    .count-input {
-      width: 90px;
+    .stepper {
+      display: inline-flex;
+      align-items: center;
+      border: 1.5px solid #ddd;
+      border-radius: 7px;
+      overflow: hidden;
+      background: #fafafa;
+    }
+
+    .stepper-btn {
+      width: 40px;
+      height: 40px;
+      border: none;
+      background: #f0f0f0;
+      color: #333;
+      font-size: 1.3rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      font-family: 'Roboto', sans-serif;
+      line-height: 1;
+    }
+
+    .stepper-btn:hover {
+      background: #e0e0e0;
+    }
+
+    .stepper-display {
+      min-width: 50px;
+      text-align: center;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1rem;
+      color: #333;
     }
 
     .pool-toggle-group {
@@ -133,10 +163,10 @@
     }
 
     .pool-toggle.active {
-      background: #f97316;
+      background: #EFBC49;
       color: #fff;
-      border-color: #f97316;
-      box-shadow: 0 3px 10px rgba(249,115,22,0.3);
+      border-color: #EFBC49;
+      box-shadow: 0 3px 10px rgba(239,188,73,0.3);
     }
 
     .form-error {
@@ -152,7 +182,7 @@
     .rsvp-form-submit {
       width: 100%;
       padding: 13px;
-      background: #f97316;
+      background: #EFBC49;
       color: #fff;
       border: none;
       border-radius: 10px;
@@ -185,7 +215,7 @@
     .thank-you-heading {
       font-family: 'Fredoka', sans-serif;
       font-size: 1.6rem;
-      color: #f97316;
+      color: #EFBC49;
       margin-bottom: 10px;
     }
 
@@ -195,25 +225,31 @@
       line-height: 1.6;
     }
 
+    .form-heading {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.6rem;
+      color: #EFBC49;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
     .calendar-section {
       margin-top: 40px;
       width: 100%;
       max-width: 640px;
+      background: #fff;
+      border-radius: 8px;
+      padding: 20px 24px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
       text-align: center;
     }
 
     .calendar-section h2 {
       font-family: 'Fredoka', sans-serif;
-      font-size: 1.4rem;
-      color: #DEBC51;
-      text-shadow:
-        -1px -1px 0 #000,
-         1px -1px 0 #000,
-        -1px  1px 0 #000,
-         1px  1px 0 #000,
-         2px  3px 6px #03A9F4;
-      margin-bottom: 16px;
-      letter-spacing: 0.03em;
+      font-size: 1.6rem;
+      color: #EFBC49;
+      margin-bottom: 20px;
+      text-align: center;
     }
 
     .calendar-buttons {
@@ -279,32 +315,57 @@
     }
 
     .pool-note {
-      margin-top: 40px;
-      width: 100%;
-      max-width: 640px;
       background: #08CCE2;
       border-radius: 8px;
-      padding: 20px 24px;
+      padding: 16px 20px;
       color: #fff;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      margin-bottom: 20px;
     }
 
-    .pool-note-header {
+    .pool-name-row {
       display: flex;
+      gap: 8px;
       align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
 
-    .pool-note-header svg {
+    .pool-name-remove {
+      width: 36px;
+      height: 40px;
       flex-shrink: 0;
-      opacity: 0.9;
+      border: 1.5px solid #ddd;
+      border-radius: 7px;
+      background: #fafafa;
+      color: #999;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s, border-color 0.15s;
     }
 
-    .pool-note-title {
-      font-family: 'Fredoka', sans-serif;
-      font-size: 1.15rem;
-      letter-spacing: 0.02em;
+    .pool-name-remove:hover {
+      background: #fef2f2;
+      color: #dc2626;
+      border-color: #fecaca;
+    }
+
+    .add-person-btn {
+      display: inline-flex;
+      align-items: center;
+      padding: 8px 16px;
+      border: 1.5px dashed #ddd;
+      border-radius: 7px;
+      background: transparent;
+      color: #666;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: border-color 0.15s, color 0.15s;
+      margin-bottom: 20px;
+    }
+
+    .add-person-btn:hover {
+      border-color: #EFBC49;
+      color: #EFBC49;
     }
 
     .pool-note-highlight {
@@ -359,7 +420,7 @@
     }
 
     .rsvp-btn.yes {
-      background: #f97316;
+      background: #EFBC49;
       color: #fff;
       box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
@@ -411,16 +472,6 @@
     <img src="vee-birthday-invite.jpeg" alt="Vee">
   </div>
 
-  <div class="pool-note">
-    <div class="pool-note-header">
-      <span class="pool-note-title">Planning to swim?</span>
-    </div>
-    <div class="pool-note-highlight">Pool opens at 4pm</div>
-    <div class="pool-note-body">
-      We need to submit swimmer names to the HOA in advance — please include the full names of everyone in your group who'll be using the pool when you fill out the RSVP below.
-    </div>
-  </div>
-
   <div class="rsvp-prompt" id="rsvpPrompt">
     <h2>Will you be joining us?</h2>
     <div class="rsvp-buttons">
@@ -439,14 +490,37 @@
   <div class="form-container">
     <form class="rsvp-form" id="rsvpForm" novalidate>
 
+      <h2 class="form-heading">RSVP</h2>
+
       <div class="form-field">
-        <label class="form-label" for="adultsCount">Number of adults</label>
-        <input type="number" id="adultsCount" class="form-input count-input" min="1" value="1">
+        <label class="form-label" for="yourName">Your name</label>
+        <input type="text" id="yourName" class="form-input" placeholder="Full name">
       </div>
 
       <div class="form-field">
-        <label class="form-label" for="kidsCount">Number of kids</label>
-        <input type="number" id="kidsCount" class="form-input count-input" min="0" value="0">
+        <label class="form-label" for="contactInput">
+          Phone or email <span class="form-optional">(optional)</span>
+        </label>
+        <input type="text" id="contactInput" class="form-input" placeholder="e.g. 9195550123 or alice@example.com">
+        <span class="form-hint">So you can update your RSVP later if plans change.</span>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Number of adults</label>
+        <div class="stepper">
+          <button type="button" class="stepper-btn" onclick="adjustCount('adultsCount', -1)">−</button>
+          <span class="stepper-display" id="adultsCount">1</span>
+          <button type="button" class="stepper-btn" onclick="adjustCount('adultsCount', 1)">+</button>
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Number of kids</label>
+        <div class="stepper">
+          <button type="button" class="stepper-btn" onclick="adjustCount('kidsCount', -1)">−</button>
+          <span class="stepper-display" id="kidsCount">0</span>
+          <button type="button" class="stepper-btn" onclick="adjustCount('kidsCount', 1)">+</button>
+        </div>
       </div>
 
       <div class="form-field">
@@ -457,14 +531,15 @@
         </div>
       </div>
 
-      <div id="nameFields"></div>
-
-      <div class="form-field">
-        <label class="form-label" for="contactInput">
-          Phone or email <span class="form-optional">(optional)</span>
-        </label>
-        <input type="text" id="contactInput" class="form-input" placeholder="e.g. 9195550123 or alice@example.com">
-        <span class="form-hint">So you can update your RSVP later if plans change.</span>
+      <div id="poolSection" style="display:none">
+        <div class="pool-note">
+          <div class="pool-note-highlight">Pool opens at 4pm</div>
+          <div class="pool-note-body">
+            We need to submit names to the HOA in advance.<br>Please include the full names of everyone in your group who'll be entering the pool area.
+          </div>
+        </div>
+        <div id="poolNameList"></div>
+        <button type="button" class="add-person-btn" onclick="addPoolPerson('')">+ Add person</button>
       </div>
 
       <div id="formError" class="form-error" style="display:none"></div>
@@ -479,7 +554,7 @@
   </div>
 
   <div class="calendar-section">
-    <h2>Add to your calendar</h2>
+    <h2>ADD TO YOUR CALENDAR</h2>
     <div class="calendar-buttons">
       <a class="calendar-btn gcal" href="https://calendar.google.com/calendar/render?action=TEMPLATE&text=Valentina%27s+Birthday&dates=20260614T140000%2F20260614T180000&details=Pool+opens+at+4pm%21+Please+include+the+names+of+everyone+in+your+group+who%27ll+be+swimming+%E2%80%94+we+need+to+add+them+to+the+HOA+guest+list+in+advance.&location=200+Loch+Highlands+Drive%2C+Cary%2C+NC+27518&ctz=America%2FNew_York" target="_blank" rel="noopener">
         <svg class="cal-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -557,69 +632,38 @@
 
     // ── Pool toggle ───────────────────────────────────────────────────────────
     var poolChoice = null;
-    var cachedAdultNames = [];
-    var cachedKidNames   = [];
-    var renderedAdultsCount = 0;
-
-    function snapshotPoolNames() {
-      var inputs = document.querySelectorAll('.pool-name');
-      if (!inputs.length) return;
-      inputs.forEach(function(inp, i) {
-        if (i < renderedAdultsCount) {
-          cachedAdultNames[i] = inp.value;
-        } else {
-          cachedKidNames[i - renderedAdultsCount] = inp.value;
-        }
-      });
-    }
 
     function setPool(val) {
-      snapshotPoolNames();
       poolChoice = val;
       document.querySelectorAll('.pool-toggle').forEach(function(btn) {
         btn.classList.toggle('active', btn.dataset.val === val);
       });
-      renderNameFields();
-    }
-
-    function renderNameFields() {
-      snapshotPoolNames();
-      var adults = Math.max(1, parseInt(document.getElementById('adultsCount').value) || 1);
-      var kids   = Math.max(0, parseInt(document.getElementById('kidsCount').value)   || 0);
-      var container = document.getElementById('nameFields');
-
-      if (poolChoice === 'yes') {
-        var html = '';
-        for (var a = 1; a <= adults; a++) {
-          var val = cachedAdultNames[a - 1] ? cachedAdultNames[a - 1].replace(/"/g, '&quot;') : '';
-          html += '<div class="form-field">'
-            + '<label class="form-label">Adult ' + a + ' name</label>'
-            + '<input type="text" class="form-input pool-name" placeholder="Full name" value="' + val + '">'
-            + '</div>';
+      var poolSection = document.getElementById('poolSection');
+      if (val === 'yes') {
+        poolSection.style.display = 'block';
+        if (document.querySelectorAll('.pool-name').length === 0) {
+          addPoolPerson(document.getElementById('yourName').value.trim());
         }
-        for (var k = 1; k <= kids; k++) {
-          var val = cachedKidNames[k - 1] ? cachedKidNames[k - 1].replace(/"/g, '&quot;') : '';
-          html += '<div class="form-field">'
-            + '<label class="form-label">Kid ' + k + ' name</label>'
-            + '<input type="text" class="form-input pool-name" placeholder="Full name" value="' + val + '">'
-            + '</div>';
-        }
-        container.innerHTML = html;
-        renderedAdultsCount = adults;
-      } else if (poolChoice === 'no') {
-        container.innerHTML = '<div class="form-field">'
-          + '<label class="form-label" for="rsvpName">Your name</label>'
-          + '<input type="text" id="rsvpName" class="form-input" placeholder="Full name">'
-          + '</div>';
-        renderedAdultsCount = 0;
       } else {
-        container.innerHTML = '';
-        renderedAdultsCount = 0;
+        poolSection.style.display = 'none';
       }
     }
 
-    document.getElementById('adultsCount').addEventListener('input', renderNameFields);
-    document.getElementById('kidsCount').addEventListener('input', renderNameFields);
+    function adjustCount(id, delta) {
+      var el = document.getElementById(id);
+      var min = (id === 'adultsCount') ? 1 : 0;
+      var current = parseInt(el.textContent) || min;
+      el.textContent = Math.max(min, current + delta);
+    }
+
+    function addPoolPerson(name) {
+      var list = document.getElementById('poolNameList');
+      var row = document.createElement('div');
+      row.className = 'pool-name-row';
+      row.innerHTML = '<input type="text" class="form-input pool-name" placeholder="Full name" value="' + (name ? name.replace(/"/g, '&quot;') : '') + '">'
+        + '<button type="button" class="pool-name-remove" onclick="this.closest(\'.pool-name-row\').remove()">×</button>';
+      list.appendChild(row);
+    }
 
     // ── Document ID resolution ────────────────────────────────────────────────
     function resolveDocId(contact) {
@@ -643,18 +687,25 @@
       e.preventDefault();
       document.getElementById('formError').style.display = 'none';
 
+      var yourName = document.getElementById('yourName').value.trim();
+      if (!yourName) {
+        showFormError('Please enter your name.');
+        return;
+      }
+
       if (!poolChoice) {
         showFormError('Please let us know if you\'ll be joining the pool.');
         return;
       }
 
-      var adults  = Math.max(1, parseInt(document.getElementById('adultsCount').value) || 1);
-      var kids    = Math.max(0, parseInt(document.getElementById('kidsCount').value)   || 0);
+      var adults  = Math.max(1, parseInt(document.getElementById('adultsCount').textContent) || 1);
+      var kids    = Math.max(0, parseInt(document.getElementById('kidsCount').textContent)   || 0);
       var contactRaw = document.getElementById('contactInput').value.trim();
       var contact = contactRaw ? contactRaw.toLowerCase() : null;
       var joiningPool = (poolChoice === 'yes');
 
       var data = {
+        rsvpName: yourName,
         adultsCount: adults,
         kidsCount: kids,
         joiningPool: joiningPool,
@@ -672,6 +723,10 @@
 
       if (joiningPool) {
         var nameInputs = document.querySelectorAll('.pool-name');
+        if (nameInputs.length === 0) {
+          showFormError('Please add at least one name for the pool area.');
+          return;
+        }
         var poolNames = [];
         var allFilled = true;
         nameInputs.forEach(function(inp) {
@@ -679,17 +734,10 @@
           poolNames.push(inp.value.trim());
         });
         if (!allFilled) {
-          showFormError('Please enter a name for each person joining the pool.');
+          showFormError('Please fill in all names for the pool area.');
           return;
         }
         data.poolNames = poolNames;
-      } else {
-        var nameEl = document.getElementById('rsvpName');
-        if (!nameEl || !nameEl.value.trim()) {
-          showFormError('Please enter your name.');
-          return;
-        }
-        data.rsvpName = nameEl.value.trim();
       }
 
       var docId = resolveDocId(contact);
