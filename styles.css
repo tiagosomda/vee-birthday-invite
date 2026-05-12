@@ -14,15 +14,23 @@ body {
 }
 
 .photo-container {
-  width: 100%;
-  max-width: 640px;
+  position: relative;
+  width: calc(100% + 40px);
+  max-width: none;
+  margin: -40px -20px 0;
 }
 
-.photo-container img {
+.anim-frame {
   width: 100%;
   height: auto;
+  display: none;
+}
+
+.anim-frame.active {
   display: block;
-  border-radius: 8px;
+}
+
+.anim-frame.photo-shadow {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
 }
 
@@ -277,9 +285,9 @@ body {
 
 .calendar-buttons {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
 }
 
 .calendar-btn {
@@ -308,33 +316,18 @@ body {
   background: #fce8e6;
   color: #6b1a15;
   border: 1px solid #f5c6c2;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-
-.calendar-btn.gcal:hover {
-  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
 }
 
 .calendar-btn.acal {
   background: #1c1c1e;
   color: #fff;
   border: none;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-
-.calendar-btn.acal:hover {
-  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
 }
 
 .calendar-btn.outlook {
   background: #cce4f7;
   color: #004578;
   border: 1px solid #a8d2f0;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-}
-
-.calendar-btn.outlook:hover {
-  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
 }
 
 .pool-note {
@@ -377,7 +370,7 @@ body {
   transition: background 0.15s, color 0.15s, border-color 0.15s;
 }
 
-.pool-name-remove:hover {
+.pool-name-remove, .pool-name-remove:hover {
   background: #fef2f2;
   color: #dc2626;
   border-color: #fecaca;
@@ -398,7 +391,7 @@ body {
   margin-bottom: 20px;
 }
 
-.add-person-btn:hover {
+.add-person-btn , .add-person-btn:hover {
   border-color: #DB3F4A;
   color: #DB3F4A;
 }
@@ -449,6 +442,12 @@ body {
     width: 100%;
     max-width: 320px;
   }
+
+  .calendar-btn {
+    width: 100%;
+    max-width: 320px;
+    justify-content: center;
+  }
 }
 
 .rsvp-btn {
@@ -492,21 +491,373 @@ body {
   max-width: 640px;
   text-align: center;
   display: none;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding: 40px 24px;
 }
 
 .rsvp-decline p {
   font-family: 'Fredoka', sans-serif;
-  font-size: 1.3rem;
-  color: #c45c00;
+  font-size: 1.6rem;
+  color: #DB3F4A;
 }
 
 .rsvp-decline .rsvp-change {
-  margin-top: 12px;
+  margin-top: 16px;
   background: none;
-  border: none;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
   font-family: 'Roboto', sans-serif;
   font-size: 0.85rem;
   color: #888;
   cursor: pointer;
+  padding: 8px 18px;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.rsvp-decline .rsvp-change:hover {
+  border-color: #DB3F4A;
+  color: #DB3F4A;
+}
+
+.admin-empty {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.2rem;
+  color: #DB3F4A;
+  text-align: center;
+  padding: 24px 0;
+}
+
+/* ── Admin Panel ──────────────────────────────────────────────────────── */
+
+#adminTrigger {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  background: none;
+  border: none;
+  color: #555;
+  font-size: 1.6rem;
+  line-height: 1;
+  opacity: 0.2;
+  cursor: pointer;
+  z-index: 100;
+  padding: 0;
+}
+
+#adminSection {
+  width: 100%;
+  max-width: 640px;
+  margin-top: 60px;
+  padding-top: 32px;
+  border-top: 2px solid #cce9f0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+#adminSignIn {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding: 28px 24px;
+}
+
+.admin-heading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.6rem;
+  color: #DB3F4A;
+  margin-bottom: 16px;
+}
+
+.admin-google-btn {
+  padding: 13px 28px;
+  background: #DB3F4A;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.1rem;
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  transition: transform 0.1s, box-shadow 0.15s;
+}
+
+.admin-google-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+}
+
+.admin-auth-error {
+  margin-top: 12px;
+  font-size: 0.88rem;
+  color: #dc2626;
+}
+
+#adminDashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-user-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding: 16px 24px;
+}
+
+.admin-user-email {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #333;
+  word-break: break-all;
+}
+
+.admin-signout-btn {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: none;
+  border: 1.5px solid #DB3F4A;
+  border-radius: 7px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.85rem;
+  color: #DB3F4A;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.admin-signout-btn:hover {
+  background: #fef2f2;
+}
+
+.admin-summary {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  padding: 20px 24px;
+}
+
+.admin-stat-chips {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.admin-stat-chip {
+  flex: 1;
+  min-width: 80px;
+  background: #EDFCFF;
+  border: 1.5px solid #cce9f0;
+  border-radius: 10px;
+  padding: 14px 12px;
+  text-align: center;
+}
+
+.admin-stat-val {
+  display: block;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 2rem;
+  color: #DB3F4A;
+  line-height: 1;
+}
+
+.admin-stat-label {
+  display: block;
+  font-size: 0.75rem;
+  color: #888;
+  margin-top: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.admin-summary-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-copy-btn {
+  padding: 9px 18px;
+  background: #fff;
+  border: 1.5px solid #ddd;
+  border-radius: 8px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.88rem;
+  color: #444;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+
+.admin-copy-btn:hover {
+  border-color: #DB3F4A;
+  background: #fff8f8;
+}
+
+.admin-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 50px;
+  margin-bottom: 14px;
+}
+
+.admin-subheading {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.4rem;
+  color: #DB3F4A;
+}
+
+.admin-refresh-btn {
+  padding: 8px 16px;
+  background: none;
+  border: 1.5px solid #DB3F4A;
+  border-radius: 7px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.82rem;
+  color: #DB3F4A;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.admin-refresh-btn:hover {
+  background: #fef2f2;
+}
+
+.admin-card .admin-copy-btn {
+  margin-top: 10px;
+  padding: 6px 14px;
+  font-size: 0.82rem;
+}
+
+.admin-rsvp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding-bottom: 60px;
+}
+
+.admin-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+.admin-card-name {
+  font-family: 'Fredoka', sans-serif;
+  font-size: 1.2rem;
+  color: #DB3F4A;
+  margin-bottom: 8px;
+}
+
+.admin-card-field {
+  font-size: 0.88rem;
+  color: #555;
+  margin-bottom: 4px;
+}
+
+.admin-card-meta {
+  font-size: 0.78rem;
+  color: #999;
+  margin-top: 8px;
+}
+
+.admin-delete-btn {
+  display: block;
+  margin-top: 16px;
+  margin-left: auto;
+  padding: 8px 16px;
+  background: none;
+  border: 1.5px solid #fca5a5;
+  border-radius: 7px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.82rem;
+  color: #dc2626;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.admin-delete-btn:hover {
+  background: #fef2f2;
+}
+
+.admin-delete-confirm {
+  margin-top: 14px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.admin-delete-confirm-label {
+  font-size: 0.85rem;
+  color: #7f1d1d;
+  margin-bottom: 10px;
+}
+
+.admin-delete-confirm-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1.5px solid #fca5a5;
+  border-radius: 7px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.95rem;
+  color: #333;
+  background: #fff;
+  margin-bottom: 12px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.admin-delete-confirm-input:focus {
+  border-color: #dc2626;
+}
+
+.admin-delete-confirm-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-confirm-delete-btn {
+  padding: 8px 18px;
+  background: #dc2626;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-family: 'Roboto', sans-serif;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.admin-confirm-delete-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.admin-cancel-link {
+  font-size: 0.85rem;
+  color: #888;
+  background: none;
+  border: none;
+  cursor: pointer;
   text-decoration: underline;
+  font-family: 'Roboto', sans-serif;
+  padding: 0;
+}
+
+.admin-card-error {
+  margin-top: 10px;
+  font-size: 0.85rem;
+  color: #dc2626;
 }

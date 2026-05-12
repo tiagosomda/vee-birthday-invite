@@ -27,23 +27,26 @@
   <link rel="stylesheet" href="styles.css">
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 </head>
 <body>
 
   <div class="photo-container">
-    <img src="vee-birthday-invite.jpeg" alt="Vee">
+    <img class="anim-frame active" id="frame000" src="vee-birthday-invite---frame--000.jpg" alt="Vee">
+    <img class="anim-frame" id="frame001" src="vee-birthday-invite---frame--001.jpg" alt="">
+    <img class="anim-frame" id="frame002" src="vee-birthday-invite---frame--002.jpg" alt="">
   </div>
 
   <div class="rsvp-prompt" id="rsvpPrompt">
-    <h2>Will you be joining us?</h2>
+    <h2>will you be joining us?</h2>
     <div class="rsvp-buttons">
-      <button class="rsvp-btn yes" onclick="rsvp(true)">Yes, we'll be there!</button>
-      <button class="rsvp-btn no" onclick="rsvp(false)">Can't make it</button>
+      <button class="rsvp-btn yes" onclick="rsvp(true)">yes, we'll be there!</button>
+      <button class="rsvp-btn no" onclick="rsvp(false)">can't make it</button>
     </div>
   </div>
 
   <div class="rsvp-decline" id="rsvpDecline">
-    <p>we'll miss you — thanks for letting us know!</p>
+    <p>we'll miss you!</p>
     <button class="rsvp-change" onclick="rsvpReset()">Change my answer</button>
   </div>
 
@@ -101,7 +104,7 @@
       <div id="poolSection" style="display:none">
         <div class="pool-note">
           <div class="pool-note-body">
-            <strong>Please include the full names of everyone in your group</br> who'll be entering the pool area.<br>We need to submit names to the HOA in advance.</strong>
+            <strong>Please include the full names of everyone who'll be entering the pool area.</br></br>The HOA needs them in advance.</strong>
           </div>
         </div>
         <div id="poolNameList"></div>
@@ -110,7 +113,7 @@
 
       <div id="formError" class="form-error" style="display:none"></div>
 
-      <button type="submit" class="rsvp-form-submit">Send RSVP</button>
+      <button type="submit" class="rsvp-form-submit">send RSVP</button>
     </form>
 
     <div id="rsvpThankYou" style="display:none" class="thank-you">
@@ -158,12 +161,60 @@
           <rect x="15.5" y="12" width="4" height="1" rx="0.5" fill="white"/>
           <rect x="15.5" y="14.5" width="3" height="1" rx="0.5" fill="white"/>
         </svg>
-        Outlook
+        Outlook Calendar
       </a>
     </div>
   </div>
 
   </div><!-- end rsvpYesContent -->
+
+  <!-- Admin trigger: low-opacity dot fixed to bottom-right -->
+  <button id="adminTrigger" aria-label="Admin">·</button>
+
+  <!-- Admin panel: hidden until trigger is pressed -->
+  <section id="adminSection" style="display:none">
+
+    <div id="adminSignIn">
+      <h2 class="admin-heading">Admin</h2>
+      <button id="adminGoogleSignIn" class="admin-google-btn">Sign in with Google</button>
+      <p id="adminAuthError" class="admin-auth-error" style="display:none"></p>
+    </div>
+
+    <div id="adminDashboard" style="display:none">
+      <div class="admin-user-bar">
+        <span id="adminEmail" class="admin-user-email"></span>
+        <button id="adminSignOut" class="admin-signout-btn">Sign out</button>
+      </div>
+
+      <div class="admin-summary">
+        <div class="admin-stat-chips">
+          <div class="admin-stat-chip">
+            <span class="admin-stat-val" id="statAdults">—</span>
+            <span class="admin-stat-label">Adults</span>
+          </div>
+          <div class="admin-stat-chip">
+            <span class="admin-stat-val" id="statKids">—</span>
+            <span class="admin-stat-label">Kids</span>
+          </div>
+          <div class="admin-stat-chip">
+            <span class="admin-stat-val" id="statPool">—</span>
+            <span class="admin-stat-label">Pool</span>
+          </div>
+        </div>
+        <div class="admin-summary-actions">
+          <button id="copyPoolNamesBtn" class="admin-copy-btn">Copy pool names</button>
+          <button id="copyContactBtn" class="admin-copy-btn">Copy contact info</button>
+        </div>
+      </div>
+
+      <div class="admin-section-header">
+        <h3 class="admin-subheading">RSVP Responses</h3>
+        <button id="adminRefresh" class="admin-refresh-btn">Refresh</button>
+      </div>
+      <div id="adminRsvpList" class="admin-rsvp-list"></div>
+    </div>
+
+  </section>
 
   <script src="script.js"></script>
 

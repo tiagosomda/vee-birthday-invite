@@ -1,3 +1,6 @@
+// ── Feature flags ─────────────────────────────────────────────────────────
+var SHOW_PHOTO_SHADOW = false;
+
 // ── Firebase ──────────────────────────────────────────────────────────────
 firebase.initializeApp({
   apiKey: "AIzaSyAOJCxd1PY7JcsIc2z1KtCVZcDst4CtnFM",
@@ -11,6 +14,10 @@ var db = firebase.firestore();
 
 // ── Prefill from localStorage ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.anim-frame').forEach(function(el) {
+    el.classList.toggle('photo-shadow', SHOW_PHOTO_SHADOW);
+  });
+
   var savedName    = localStorage.getItem('rsvp_name');
   var savedContact = localStorage.getItem('rsvp_contact');
   if (savedName)    document.getElementById('yourName').value    = savedName;
@@ -122,6 +129,263 @@ function showFormError(msg) {
   el.style.display = 'block';
 }
 
+// ── Admin Panel ───────────────────────────────────────────────────────────────
+var adminAllDocs = [];
+var adminCurrentUser = null;
+
+function showAdmin() {
+  var section = document.getElementById('adminSection');
+  section.style.display = 'block';
+  section.scrollIntoView({ behavior: 'smooth' });
+}
+
+document.getElementById('adminTrigger').addEventListener('click', showAdmin);
+
+document.getElementById('adminGoogleSignIn').addEventListener('click', function() {
+  document.getElementById('adminAuthError').style.display = 'none';
+  var provider = new firebase.auth.GoogleAuthProvider();
+  firebase.auth().signInWithPopup(provider).catch(function(err) {
+    var errEl = document.getElementById('adminAuthError');
+    errEl.textContent = 'Sign-in failed: ' + err.message;
+    errEl.style.display = 'block';
+  });
+});
+
+document.getElementById('adminSignOut').addEventListener('click', function() {
+  firebase.auth().signOut();
+});
+
+document.getElementById('adminRefresh').addEventListener('click', loadAdminData);
+
+document.getElementById('copyPoolNamesBtn').addEventListener('click', function() {
+  var btn = this;
+  var lines = adminAllDocs
+    .filter(function(d) { return d.joiningPool && d.poolNames && d.poolNames.length; })
+    .map(function(d) { return d.poolNames.join('\n'); })
+    .join('\n\n');
+  navigator.clipboard.writeText(lines).then(function() {
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy pool names'; }, 2000);
+  });
+});
+
+document.getElementById('copyContactBtn').addEventListener('click', function() {
+  var btn = this;
+  var phones = adminAllDocs
+    .filter(function(d) { return d.contact && !d.contact.includes('@'); })
+    .map(function(d) { return d.contact; });
+  var emails = adminAllDocs
+    .filter(function(d) { return d.contact && d.contact.includes('@'); })
+    .map(function(d) { return d.contact; });
+  var noContact = adminAllDocs
+    .filter(function(d) { return !d.contact; })
+    .map(function(d) { return d.rsvpName; });
+  var all = phones.concat(emails).concat(noContact).join('\n');
+  navigator.clipboard.writeText(all).then(function() {
+    btn.textContent = 'Copied!';
+    setTimeout(function() { btn.textContent = 'Copy contact info'; }, 2000);
+  });
+});
+
+// Store user reference so loadAdminData can use it after Firestore confirms access.
+firebase.auth().onAuthStateChanged(function(user) {
+  adminCurrentUser = user;
+  if (user) {
+    loadAdminData();
+  } else {
+    document.getElementById('adminSignIn').style.display = 'block';
+    document.getElementById('adminDashboard').style.display = 'none';
+    document.getElementById('adminRsvpList').innerHTML = '';
+    adminAllDocs = [];
+  }
+});
+
+function loadAdminData() {
+  document.getElementById('adminRsvpList').innerHTML = '<p class="admin-card-field">Loading…</p>';
+  db.collection('vee-first-birthday-rsvps').orderBy('submittedAt', 'asc').get()
+    .then(function(snapshot) {
+      // Only show dashboard once Firestore read confirms access.
+      if (adminCurrentUser) {
+        document.getElementById('adminEmail').textContent = adminCurrentUser.email;
+        document.getElementById('adminSignIn').style.display = 'none';
+        document.getElementById('adminDashboard').style.display = 'block';
+      }
+      adminAllDocs = [];
+      snapshot.forEach(function(doc) {
+        adminAllDocs.push(Object.assign({ _id: doc.id }, doc.data()));
+      });
+      renderAdminSummary();
+      renderAdminCards();
+    })
+    .catch(function(err) {
+      if (err.code === 'permission-denied') {
+        document.getElementById('adminDashboard').style.display = 'none';
+        document.getElementById('adminSignIn').style.display = 'block';
+        var errEl = document.getElementById('adminAuthError');
+        errEl.textContent = 'Not authorized.';
+        errEl.style.display = 'block';
+      } else {
+        document.getElementById('adminRsvpList').innerHTML =
+          '<p class="admin-card-field admin-card-error" style="display:block">Error loading data: ' + adminEsc(err.message) + '</p>';
+      }
+    });
+}
+
+function renderAdminSummary() {
+  var adults = 0, kids = 0, pool = 0;
+  adminAllDocs.forEach(function(d) {
+    adults += (d.adultsCount || 0);
+    kids   += (d.kidsCount   || 0);
+    if (d.joiningPool && d.poolNames) pool += d.poolNames.length;
+  });
+  document.getElementById('statAdults').textContent = adults;
+  document.getElementById('statKids').textContent   = kids;
+  document.getElementById('statPool').textContent   = pool;
+}
+
+function renderAdminCards() {
+  var list = document.getElementById('adminRsvpList');
+  list.innerHTML = '';
+  if (adminAllDocs.length === 0) {
+    list.innerHTML = '<p class="admin-empty">No RSVPs yet.</p>';
+    return;
+  }
+  adminAllDocs.forEach(function(doc) {
+    list.appendChild(buildAdminCard(doc));
+  });
+}
+
+function buildAdminCard(doc) {
+  var card = document.createElement('div');
+  card.className = 'admin-card';
+  card.dataset.id = doc._id;
+
+  var adults = doc.adultsCount || 0;
+  var kids   = doc.kidsCount   || 0;
+  var counts = adults + ' adult' + (adults !== 1 ? 's' : '');
+  if (kids > 0) counts += ' · ' + kids + ' kid' + (kids !== 1 ? 's' : '');
+
+  var submittedStr = '';
+  if (doc.submittedAt && doc.submittedAt.toDate) {
+    submittedStr = doc.submittedAt.toDate().toLocaleString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric',
+      hour: 'numeric', minute: '2-digit'
+    });
+  }
+
+  var html = '<div class="admin-card-name">' + adminEsc(doc.rsvpName) + '</div>';
+  if (doc.contact) {
+    html += '<div class="admin-card-field">Contact: ' + adminEsc(doc.contact) + '</div>';
+  }
+  html += '<div class="admin-card-field">' + adminEsc(counts) + '</div>';
+  html += '<div class="admin-card-field">' + (doc.joiningPool ? '🏊 Joining pool' : 'Not joining pool') + '</div>';
+  if (submittedStr) {
+    html += '<div class="admin-card-meta">Submitted: ' + adminEsc(submittedStr) + '</div>';
+  }
+  if (doc.joiningPool && doc.poolNames && doc.poolNames.length) {
+    html += '<div class="admin-card-field" style="margin-top:10px">Pool names: ' + adminEsc(doc.poolNames.join(', ')) + '</div>'
+      + '<button class="admin-copy-btn">Copy pool names</button>';
+  }
+  html += '<button class="admin-delete-btn">Delete</button>';
+  html += '<div class="admin-delete-confirm" style="display:none">'
+    + '<div class="admin-delete-confirm-label">Type <strong>' + adminEsc(doc.rsvpName) + '</strong> to confirm</div>'
+    + '<input type="text" class="admin-delete-confirm-input" placeholder="' + adminEsc(doc.rsvpName) + '">'
+    + '<div class="admin-delete-confirm-actions">'
+    + '<button class="admin-confirm-delete-btn" disabled>Confirm delete</button>'
+    + '<button class="admin-cancel-link">Cancel</button>'
+    + '</div>'
+    + '<div class="admin-card-error" style="display:none"></div>'
+    + '</div>';
+
+  card.innerHTML = html;
+
+  var copyPoolBtn = card.querySelector('.admin-copy-btn');
+  if (copyPoolBtn) {
+    copyPoolBtn.addEventListener('click', function() {
+      var btn = this;
+      navigator.clipboard.writeText(doc.poolNames.join('\n')).then(function() {
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy pool names'; }, 2000);
+      });
+    });
+  }
+
+  card.querySelector('.admin-delete-btn').addEventListener('click', function() {
+    this.style.display = 'none';
+    card.querySelector('.admin-delete-confirm').style.display = 'block';
+    card.querySelector('.admin-delete-confirm-input').focus();
+  });
+
+  card.querySelector('.admin-delete-confirm-input').addEventListener('input', function() {
+    var matches = this.value.trim().toLowerCase() === doc.rsvpName.toLowerCase();
+    card.querySelector('.admin-confirm-delete-btn').disabled = !matches;
+  });
+
+  card.querySelector('.admin-cancel-link').addEventListener('click', function() {
+    card.querySelector('.admin-delete-confirm').style.display = 'none';
+    card.querySelector('.admin-delete-confirm-input').value = '';
+    card.querySelector('.admin-confirm-delete-btn').disabled = true;
+    card.querySelector('.admin-delete-btn').style.display = '';
+  });
+
+  card.querySelector('.admin-confirm-delete-btn').addEventListener('click', function() {
+    var btn = this;
+    btn.disabled = true;
+    btn.textContent = 'Deleting…';
+    var errorEl = card.querySelector('.admin-card-error');
+    errorEl.style.display = 'none';
+    db.collection('vee-first-birthday-rsvps').doc(doc._id).delete()
+      .then(function() {
+        card.remove();
+        adminAllDocs = adminAllDocs.filter(function(d) { return d._id !== doc._id; });
+        renderAdminSummary();
+        if (adminAllDocs.length === 0) {
+          document.getElementById('adminRsvpList').innerHTML = '<p class="admin-empty">No RSVPs yet.</p>';
+        }
+      })
+      .catch(function(err) {
+        btn.disabled = false;
+        btn.textContent = 'Confirm delete';
+        errorEl.textContent = 'Error: ' + err.message;
+        errorEl.style.display = 'block';
+      });
+  });
+
+  return card;
+}
+
+function adminEsc(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+// ── Photo wiggle animation ────────────────────────────────────────────────────
+(function() {
+  var frames = [
+    document.getElementById('frame000'),
+    document.getElementById('frame001'),
+    document.getElementById('frame002'),
+  ];
+  // sequence: center, left, center, right
+  var sequence  = [0, 1, 0, 2];
+  var durations = [230, 230, 230, 230]; // ms per step
+  var step = 0;
+
+  function tick() {
+    var idx = sequence[step];
+    var dur = durations[step];
+    frames.forEach(function(f, i) { f.classList.toggle('active', i === idx); });
+    step = (step + 1) % sequence.length;
+    setTimeout(tick, dur);
+  }
+
+  window.addEventListener('load', function() { setTimeout(tick, 800); });
+})();
+
+// ── Form submission ───────────────────────────────────────────────────────────
 document.getElementById('rsvpForm').addEventListener('submit', function(e) {
   e.preventDefault();
   document.getElementById('formError').style.display = 'none';
