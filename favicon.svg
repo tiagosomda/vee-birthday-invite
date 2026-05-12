@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <!-- Rays -->
+  <g fill="#FFD700" stroke="#FFA500" stroke-width="2">
+    <line x1="50" y1="5" x2="50" y2="18"/>
+    <line x1="50" y1="82" x2="50" y2="95"/>
+    <line x1="5" y1="50" x2="18" y2="50"/>
+    <line x1="82" y1="50" x2="95" y2="50"/>
+    <line x1="19" y1="19" x2="28" y2="28"/>
+    <line x1="72" y1="72" x2="81" y2="81"/>
+    <line x1="81" y1="19" x2="72" y2="28"/>
+    <line x1="28" y1="72" x2="19" y2="81"/>
+  </g>
+  <!-- Ray tips (rounded) -->
+  <g fill="#FFD700">
+    <circle cx="50" cy="5" r="4"/>
+    <circle cx="50" cy="95" r="4"/>
+    <circle cx="5" cy="50" r="4"/>
+    <circle cx="95" cy="50" r="4"/>
+    <circle cx="19" cy="19" r="4"/>
+    <circle cx="81" cy="81" r="4"/>
+    <circle cx="81" cy="19" r="4"/>
+    <circle cx="19" cy="81" r="4"/>
+  </g>
+  <!-- Sun body -->
+  <circle cx="50" cy="50" r="26" fill="#FFD700" stroke="#FFA500" stroke-width="2"/>
+  <!-- Face -->
+  <!-- Eyes -->
+  <circle cx="42" cy="45" r="3.5" fill="#5C3A1E"/>
+  <circle cx="58" cy="45" r="3.5" fill="#5C3A1E"/>
+  <!-- Eye shine -->
+  <circle cx="43.5" cy="43.5" r="1.2" fill="white"/>
+  <circle cx="59.5" cy="43.5" r="1.2" fill="white"/>
+  <!-- Smile -->
+  <path d="M 40 55 Q 50 65 60 55" stroke="#5C3A1E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <!-- Rosy cheeks -->
+  <circle cx="38" cy="53" r="5" fill="#FFB6C1" opacity="0.6"/>
+  <circle cx="62" cy="53" r="5" fill="#FFB6C1" opacity="0.6"/>
+</svg>
