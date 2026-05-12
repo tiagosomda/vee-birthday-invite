@@ -27,33 +27,86 @@ document.addEventListener('DOMContentLoaded', function() {
 
 document.getElementById('rsvpForm').addEventListener('input', updateSubmitState);
 
+// ── Scroll helper ─────────────────────────────────────────────────────────
+function smoothScrollTo(targetY, duration) {
+  var startY = window.scrollY;
+  var diff = targetY - startY;
+  var startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    var p = Math.min((ts - startTime) / duration, 1);
+    // ease-in-out cubic
+    var ease = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+    window.scrollTo(0, startY + diff * ease);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ── Transition helpers ────────────────────────────────────────────────────
+function fadeOut(el, cb) {
+  el.style.transition = 'opacity 0.3s';
+  el.style.opacity = '0';
+  setTimeout(function() {
+    el.style.display = 'none';
+    el.style.transition = '';
+    el.style.opacity = '';
+    if (cb) cb();
+  }, 300);
+}
+
+function fadeIn(el, displayVal) {
+  el.style.opacity = '0';
+  el.style.display = displayVal || 'block';
+  el.style.transition = 'opacity 0.3s';
+  el.offsetHeight; // force reflow so transition fires
+  el.style.opacity = '1';
+  setTimeout(function() {
+    el.style.transition = '';
+    el.style.opacity = '';
+  }, 300);
+}
+
 // ── RSVP gate ─────────────────────────────────────────────────────────────
 function rsvp(coming) {
-  document.getElementById('rsvpPrompt').style.display = 'none';
-  if (coming) {
-    var el = document.getElementById('rsvpYesContent');
-    el.style.display = 'flex';
-    el.style.flexDirection = 'column';
-    el.style.alignItems = 'center';
-    el.style.width = '100%';
-  } else {
-    document.getElementById('rsvpDecline').style.display = 'block';
-  }
+  var prompt = document.getElementById('rsvpPrompt');
+  fadeOut(prompt, function() {
+    if (coming) {
+      var el = document.getElementById('rsvpYesContent');
+      el.style.flexDirection = 'column';
+      el.style.alignItems = 'center';
+      el.style.width = '100%';
+      fadeIn(el, 'flex');
+      setTimeout(function() {
+        var heading = document.querySelector('.form-heading');
+        var targetY = window.scrollY + heading.getBoundingClientRect().top - 52;
+        smoothScrollTo(targetY, 1500);
+      }, 50);
+    } else {
+      fadeIn(document.getElementById('rsvpDecline'));
+    }
+  });
 }
 
 function rsvpReset() {
-  document.getElementById('rsvpPrompt').style.display = 'block';
-  document.getElementById('rsvpDecline').style.display = 'none';
-  document.getElementById('rsvpYesContent').style.display = 'none';
+  var decline = document.getElementById('rsvpDecline');
+  var yesContent = document.getElementById('rsvpYesContent');
+  var prompt = document.getElementById('rsvpPrompt');
+  var activeEl = (decline.style.display !== 'none' && decline.style.display !== '') ? decline : yesContent;
+  fadeOut(activeEl, function() {
+    fadeIn(prompt);
+  });
 }
 
 function updateRsvp() {
-  document.getElementById('rsvpThankYou').style.display = 'none';
   var form = document.getElementById('rsvpForm');
-  form.style.display = 'block';
+  var thankYou = document.getElementById('rsvpThankYou');
   var submitBtn = form.querySelector('.rsvp-form-submit');
   submitBtn.disabled = false;
   submitBtn.textContent = 'Send RSVP';
+  fadeOut(thankYou, function() {
+    fadeIn(form);
+  });
 }
 
 // ── Pool toggle ───────────────────────────────────────────────────────────
@@ -140,6 +193,10 @@ function showAdmin() {
 }
 
 document.getElementById('adminTrigger').addEventListener('click', showAdmin);
+
+document.getElementById('adminClose').addEventListener('click', function() {
+  document.getElementById('adminSection').style.display = 'none';
+});
 
 document.getElementById('adminGoogleSignIn').addEventListener('click', function() {
   document.getElementById('adminAuthError').style.display = 'none';
@@ -452,8 +509,9 @@ document.getElementById('rsvpForm').addEventListener('submit', function(e) {
     .then(function() {
       localStorage.setItem('rsvp_name', yourName);
       if (contactRaw) localStorage.setItem('rsvp_contact', contactRaw);
-      document.getElementById('rsvpForm').style.display = 'none';
-      document.getElementById('rsvpThankYou').style.display = 'block';
+      fadeOut(document.getElementById('rsvpForm'), function() {
+        fadeIn(document.getElementById('rsvpThankYou'));
+      });
     })
     .catch(function(err) {
       console.error(err);

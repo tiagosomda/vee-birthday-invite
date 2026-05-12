@@ -175,7 +175,11 @@
   <section id="adminSection" style="display:none">
 
     <div id="adminSignIn">
-      <h2 class="admin-heading">Admin</h2>
+      <div class="form-header">
+        <div style="width:32px"></div>
+        <h2 class="form-heading">Admin</h2>
+        <button type="button" class="form-close" id="adminClose" aria-label="Close">✕</button>
+      </div>
       <button id="adminGoogleSignIn" class="admin-google-btn">Sign in with Google</button>
       <p id="adminAuthError" class="admin-auth-error" style="display:none"></p>
     </div>
