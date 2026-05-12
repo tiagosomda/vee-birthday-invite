@@ -83,6 +83,11 @@ function rsvp(coming) {
         smoothScrollTo(targetY, 1500);
       }, 50);
     } else {
+      var declineForm = document.getElementById('declineForm');
+      declineForm.style.display = '';
+      declineForm.style.opacity = '';
+      document.getElementById('declineName').value = '';
+      document.getElementById('declineSubmitBtn').disabled = true;
       fadeIn(document.getElementById('rsvpDecline'));
     }
   });
@@ -180,6 +185,47 @@ function showFormError(msg) {
   var el = document.getElementById('formError');
   el.textContent = msg;
   el.style.display = 'block';
+}
+
+// ── Decline submission ────────────────────────────────────────────────────────
+function updateDeclineSubmitState() {
+  var name = document.getElementById('declineName').value.trim();
+  document.getElementById('declineSubmitBtn').disabled = !name;
+}
+
+function submitDecline() {
+  var name = document.getElementById('declineName').value.trim();
+  if (!name) return;
+
+  var uuid = localStorage.getItem('rsvp_device_id');
+  if (!uuid) {
+    uuid = crypto.randomUUID();
+    localStorage.setItem('rsvp_device_id', uuid);
+  }
+
+  var data = {
+    rsvpName: name,
+    attending: false,
+    adultsCount: 0,
+    kidsCount: 0,
+    joiningPool: false,
+    deviceId: uuid,
+    submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+  };
+
+  var btn = document.getElementById('declineSubmitBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+
+  db.collection('vee-first-birthday-rsvps').doc(uuid).set(data)
+    .then(function() {
+      fadeOut(document.getElementById('declineForm'));
+    })
+    .catch(function(err) {
+      console.error(err);
+      btn.disabled = false;
+      btn.textContent = 'let us know';
+    });
 }
 
 // ── Admin Panel ───────────────────────────────────────────────────────────────
@@ -292,38 +338,48 @@ function loadAdminData() {
 }
 
 function renderAdminSummary() {
-  var adults = 0, kids = 0, pool = 0;
+  var adults = 0, kids = 0, pool = 0, declined = 0;
   adminAllDocs.forEach(function(d) {
+    if (d.attending === false) {
+      declined++;
+      return;
+    }
     adults += (d.adultsCount || 0);
     kids   += (d.kidsCount   || 0);
     if (d.joiningPool && d.poolNames) pool += d.poolNames.length;
   });
-  document.getElementById('statAdults').textContent = adults;
-  document.getElementById('statKids').textContent   = kids;
-  document.getElementById('statPool').textContent   = pool;
+  document.getElementById('statAdults').textContent   = adults;
+  document.getElementById('statKids').textContent     = kids;
+  document.getElementById('statPool').textContent     = pool;
 }
 
 function renderAdminCards() {
   var list = document.getElementById('adminRsvpList');
   list.innerHTML = '';
-  if (adminAllDocs.length === 0) {
+
+  var attending = adminAllDocs.filter(function(d) { return d.attending !== false; });
+  var declined  = adminAllDocs.filter(function(d) { return d.attending === false; });
+
+  if (attending.length === 0 && declined.length === 0) {
     list.innerHTML = '<p class="admin-empty">No RSVPs yet.</p>';
     return;
   }
-  adminAllDocs.forEach(function(doc) {
-    list.appendChild(buildAdminCard(doc));
-  });
+
+  attending.forEach(function(doc) { list.appendChild(buildAdminCard(doc)); });
+
+  if (declined.length > 0) {
+    var divider = document.createElement('div');
+    divider.className = 'admin-declined-divider';
+    divider.innerHTML = '<span>Can\'t make it : <b>' + declined.length + '</b></span>';
+    list.appendChild(divider);
+    declined.forEach(function(doc) { list.appendChild(buildAdminCard(doc)); });
+  }
 }
 
 function buildAdminCard(doc) {
   var card = document.createElement('div');
-  card.className = 'admin-card';
+  card.className = 'admin-card' + (doc.attending === false ? ' admin-card-declined' : '');
   card.dataset.id = doc._id;
-
-  var adults = doc.adultsCount || 0;
-  var kids   = doc.kidsCount   || 0;
-  var counts = adults + ' adult' + (adults !== 1 ? 's' : '');
-  if (kids > 0) counts += ' · ' + kids + ' kid' + (kids !== 1 ? 's' : '');
 
   var submittedStr = '';
   if (doc.submittedAt && doc.submittedAt.toDate) {
@@ -334,18 +390,28 @@ function buildAdminCard(doc) {
   }
 
   var html = '<div class="admin-card-name">' + adminEsc(doc.rsvpName) + '</div>';
-  if (doc.contact) {
-    html += '<div class="admin-card-field">Contact: ' + adminEsc(doc.contact) + '</div>';
-  }
-  html += '<div class="admin-card-field">' + adminEsc(counts) + '</div>';
-  html += '<div class="admin-card-field">' + (doc.joiningPool ? '🏊 Joining pool' : 'Not joining pool') + '</div>';
+  
   if (submittedStr) {
-    html += '<div class="admin-card-meta">Submitted: ' + adminEsc(submittedStr) + '</div>';
+    html += '<div class="admin-card-meta">Submitted: ' + adminEsc(submittedStr) + '</div></hr></br>';
   }
-  if (doc.joiningPool && doc.poolNames && doc.poolNames.length) {
-    html += '<div class="admin-card-field" style="margin-top:10px">Pool names: ' + adminEsc(doc.poolNames.join(', ')) + '</div>'
-      + '<button class="admin-copy-btn">Copy pool names</button>';
+
+  if (doc.attending === false) {
+    html += '<div class="admin-card-field admin-card-declined-label">can\'t make it</div>';
+  } else {
+    var adults = doc.adultsCount || 0;
+    var kids   = doc.kidsCount   || 0;
+    var counts = adults + ' adult' + (adults !== 1 ? 's' : '');
+    if (kids > 0) counts += ' · ' + kids + ' kid' + (kids !== 1 ? 's' : '');
+    if (doc.contact) {
+      html += '<div class="admin-card-field">Contact: ' + adminEsc(doc.contact) + '</div>';
+    }
+    html += '<div class="admin-card-field">' + adminEsc(counts) + '</div>';
+    html += '<div class="admin-card-field">' + (doc.joiningPool ? '</br></br>🏊 Joining pool <button class="admin-copy-btn">Copy names</button>'  : '</br></br>Not joining pool') + '</div>';
+    if (doc.joiningPool && doc.poolNames && doc.poolNames.length) {
+      html += '<div class="admin-card-field" style="margin-top:10px">' + adminEsc(doc.poolNames.join(', ')) + '</div>';
+    }
   }
+  
   html += '<button class="admin-delete-btn">Delete</button>';
   html += '<div class="admin-delete-confirm" style="display:none">'
     + '<div class="admin-delete-confirm-label">Type <strong>' + adminEsc(doc.rsvpName) + '</strong> to confirm</div>'
@@ -396,12 +462,9 @@ function buildAdminCard(doc) {
     errorEl.style.display = 'none';
     db.collection('vee-first-birthday-rsvps').doc(doc._id).delete()
       .then(function() {
-        card.remove();
         adminAllDocs = adminAllDocs.filter(function(d) { return d._id !== doc._id; });
         renderAdminSummary();
-        if (adminAllDocs.length === 0) {
-          document.getElementById('adminRsvpList').innerHTML = '<p class="admin-empty">No RSVPs yet.</p>';
-        }
+        renderAdminCards();
       })
       .catch(function(err) {
         btn.disabled = false;

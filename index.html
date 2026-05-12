@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Valentina's First Birthday</title>
+  <title>Valentina's First Birthday Party</title>
 
   <!-- Open Graph (WhatsApp, iMessage, Facebook, LinkedIn) -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="http://www.tiago.dev/vee-birthday-invite/">
-  <meta property="og:site_name" content="Valentina's First Birthday">
-  <meta property="og:title" content="Valentina's First Birthday">
+  <meta property="og:site_name" content="Valentina's First Birthday Party">
+  <meta property="og:title" content="Valentina's First Birthday Party">
   <meta property="og:description" content="You're invited to celebrate Valentina's first birthday!">
   <meta property="og:image" content="http://www.tiago.dev/vee-birthday-invite/vee-birthday-invite-previeww.jpeg">
   <meta property="og:image:width" content="1200">
@@ -17,7 +17,7 @@
 
   <!-- Twitter / X -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Valentina's First Birthday">
+  <meta name="twitter:title" content="Valentina's First Birthday Party">
   <meta name="twitter:description" content="You're invited to celebrate Valentina's first birthday!">
   <meta name="twitter:image" content="http://www.tiago.dev/vee-birthday-invite/vee-birthday-invite-previeww.jpeg">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
@@ -47,7 +47,11 @@
 
   <div class="rsvp-decline" id="rsvpDecline">
     <p>we'll miss you!</p>
-    <button class="rsvp-change" onclick="rsvpReset()">Change my answer</button>
+    <div id="declineForm" class="decline-form">
+      <input type="text" id="declineName" class="form-input" placeholder="your name" maxlength="100" oninput="updateDeclineSubmitState()">
+      <button type="button" id="declineSubmitBtn" class="decline-submit-btn" onclick="submitDecline()" disabled>let us know</button>
+    </div>
+    <button class="rsvp-change" onclick="rsvpReset()">change my answer</button>
   </div>
 
   <div id="rsvpYesContent" style="display:none; width:100%;">
@@ -119,7 +123,7 @@
     <div id="rsvpThankYou" style="display:none" class="thank-you">
       <p class="thank-you-heading">we'll see you there!</p>
       <p class="thank-you-sub">Your RSVP has been received.</p>
-      <button class="update-rsvp-btn" onclick="updateRsvp()">Update my answer</button>
+      <button class="update-rsvp-btn" onclick="updateRsvp()">update my answer</button>
     </div>
   </div>
 
@@ -204,6 +208,7 @@
             <span class="admin-stat-val" id="statPool">—</span>
             <span class="admin-stat-label">Pool</span>
           </div>
+
         </div>
         <div class="admin-summary-actions">
           <button id="copyPoolNamesBtn" class="admin-copy-btn">Copy pool names</button>
