@@ -557,8 +557,24 @@
 
     // ── Pool toggle ───────────────────────────────────────────────────────────
     var poolChoice = null;
+    var cachedAdultNames = [];
+    var cachedKidNames   = [];
+    var renderedAdultsCount = 0;
+
+    function snapshotPoolNames() {
+      var inputs = document.querySelectorAll('.pool-name');
+      if (!inputs.length) return;
+      inputs.forEach(function(inp, i) {
+        if (i < renderedAdultsCount) {
+          cachedAdultNames[i] = inp.value;
+        } else {
+          cachedKidNames[i - renderedAdultsCount] = inp.value;
+        }
+      });
+    }
 
     function setPool(val) {
+      snapshotPoolNames();
       poolChoice = val;
       document.querySelectorAll('.pool-toggle').forEach(function(btn) {
         btn.classList.toggle('active', btn.dataset.val === val);
@@ -567,6 +583,7 @@
     }
 
     function renderNameFields() {
+      snapshotPoolNames();
       var adults = Math.max(1, parseInt(document.getElementById('adultsCount').value) || 1);
       var kids   = Math.max(0, parseInt(document.getElementById('kidsCount').value)   || 0);
       var container = document.getElementById('nameFields');
@@ -574,25 +591,30 @@
       if (poolChoice === 'yes') {
         var html = '';
         for (var a = 1; a <= adults; a++) {
+          var val = cachedAdultNames[a - 1] ? cachedAdultNames[a - 1].replace(/"/g, '&quot;') : '';
           html += '<div class="form-field">'
             + '<label class="form-label">Adult ' + a + ' name</label>'
-            + '<input type="text" class="form-input pool-name" placeholder="Full name">'
+            + '<input type="text" class="form-input pool-name" placeholder="Full name" value="' + val + '">'
             + '</div>';
         }
         for (var k = 1; k <= kids; k++) {
+          var val = cachedKidNames[k - 1] ? cachedKidNames[k - 1].replace(/"/g, '&quot;') : '';
           html += '<div class="form-field">'
             + '<label class="form-label">Kid ' + k + ' name</label>'
-            + '<input type="text" class="form-input pool-name" placeholder="Full name">'
+            + '<input type="text" class="form-input pool-name" placeholder="Full name" value="' + val + '">'
             + '</div>';
         }
         container.innerHTML = html;
+        renderedAdultsCount = adults;
       } else if (poolChoice === 'no') {
         container.innerHTML = '<div class="form-field">'
           + '<label class="form-label" for="rsvpName">Your name</label>'
           + '<input type="text" id="rsvpName" class="form-input" placeholder="Full name">'
           + '</div>';
+        renderedAdultsCount = 0;
       } else {
         container.innerHTML = '';
+        renderedAdultsCount = 0;
       }
     }
 
