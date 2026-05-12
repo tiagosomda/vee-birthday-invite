@@ -23,6 +23,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -58,11 +60,139 @@
       max-width: 640px;
     }
 
-    .form-container iframe {
-      width: 100%;
-      border: none;
+    .rsvp-form {
+      background: #fff;
       border-radius: 8px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 28px 24px;
+      width: 100%;
+    }
+
+    .form-field {
+      margin-bottom: 20px;
+    }
+
+    .form-label {
+      display: block;
+      font-family: 'Roboto', sans-serif;
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: #333;
+      margin-bottom: 6px;
+    }
+
+    .form-optional {
+      font-weight: 400;
+      color: #888;
+    }
+
+    .form-hint {
+      display: block;
+      font-size: 0.78rem;
+      color: #999;
+      margin-top: 4px;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid #ddd;
+      border-radius: 7px;
+      font-family: 'Roboto', sans-serif;
+      font-size: 0.95rem;
+      color: #333;
+      background: #fafafa;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+
+    .form-input:focus {
+      border-color: #f97316;
+      background: #fff;
+    }
+
+    .count-input {
+      width: 90px;
+    }
+
+    .pool-toggle-group {
+      display: flex;
+      gap: 10px;
+    }
+
+    .pool-toggle {
+      padding: 9px 28px;
+      border: 1.5px solid #ddd;
+      border-radius: 8px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1rem;
+      cursor: pointer;
+      background: #fafafa;
+      color: #666;
+      transition: all 0.15s;
+    }
+
+    .pool-toggle.active {
+      background: #f97316;
+      color: #fff;
+      border-color: #f97316;
+      box-shadow: 0 3px 10px rgba(249,115,22,0.3);
+    }
+
+    .form-error {
+      color: #dc2626;
+      font-size: 0.85rem;
+      margin-bottom: 14px;
+      padding: 8px 12px;
+      background: #fef2f2;
+      border-radius: 6px;
+      border: 1px solid #fecaca;
+    }
+
+    .rsvp-form-submit {
+      width: 100%;
+      padding: 13px;
+      background: #f97316;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.15rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      transition: transform 0.1s, box-shadow 0.15s;
+    }
+
+    .rsvp-form-submit:hover:not(:disabled) {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+    }
+
+    .rsvp-form-submit:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .thank-you {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      padding: 40px 24px;
+      text-align: center;
+      width: 100%;
+    }
+
+    .thank-you-heading {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.6rem;
+      color: #f97316;
+      margin-bottom: 10px;
+    }
+
+    .thank-you-sub {
+      font-size: 0.88rem;
+      color: #888;
+      line-height: 1.6;
     }
 
     .calendar-section {
@@ -307,12 +437,45 @@
   <div id="rsvpYesContent" style="display:none; width:100%;">
 
   <div class="form-container">
-    <iframe
-      src="https://docs.google.com/forms/d/e/1FAIpQLSc6HYqlCJZPbdqcc2q-BgOXK_lBwXfhZ1yFnUvk2gnz9d3x9g/viewform?embedded=true"
-      height="800"
-      frameborder="0"
-      marginheight="0"
-      marginwidth="0">Loading…</iframe>
+    <form class="rsvp-form" id="rsvpForm" novalidate>
+
+      <div class="form-field">
+        <label class="form-label" for="adultsCount">Number of adults</label>
+        <input type="number" id="adultsCount" class="form-input count-input" min="1" value="1">
+      </div>
+
+      <div class="form-field">
+        <label class="form-label" for="kidsCount">Number of kids</label>
+        <input type="number" id="kidsCount" class="form-input count-input" min="0" value="0">
+      </div>
+
+      <div class="form-field">
+        <label class="form-label">Will you be joining the pool?</label>
+        <div class="pool-toggle-group">
+          <button type="button" class="pool-toggle" data-val="yes" onclick="setPool('yes')">Yes</button>
+          <button type="button" class="pool-toggle" data-val="no" onclick="setPool('no')">No</button>
+        </div>
+      </div>
+
+      <div id="nameFields"></div>
+
+      <div class="form-field">
+        <label class="form-label" for="contactInput">
+          Phone or email <span class="form-optional">(optional)</span>
+        </label>
+        <input type="text" id="contactInput" class="form-input" placeholder="e.g. 9195550123 or alice@example.com">
+        <span class="form-hint">So you can update your RSVP later if plans change.</span>
+      </div>
+
+      <div id="formError" class="form-error" style="display:none"></div>
+
+      <button type="submit" class="rsvp-form-submit">Send RSVP</button>
+    </form>
+
+    <div id="rsvpThankYou" style="display:none" class="thank-you">
+      <p class="thank-you-heading">We'll see you there!</p>
+      <p class="thank-you-sub">Your RSVP has been received. Fill the form again any time if your plans change.</p>
+    </div>
   </div>
 
   <div class="calendar-section">
@@ -361,6 +524,18 @@
   </div><!-- end rsvpYesContent -->
 
   <script>
+    // ── Firebase ──────────────────────────────────────────────────────────────
+    firebase.initializeApp({
+      apiKey: "AIzaSyAOJCxd1PY7JcsIc2z1KtCVZcDst4CtnFM",
+      authDomain: "tiago-dev-site.firebaseapp.com",
+      projectId: "tiago-dev-site",
+      storageBucket: "tiago-dev-site.firebasestorage.app",
+      messagingSenderId: "706177559293",
+      appId: "1:706177559293:web:824030a6e826596ed7ac94"
+    });
+    var db = firebase.firestore();
+
+    // ── RSVP gate ─────────────────────────────────────────────────────────────
     function rsvp(coming) {
       document.getElementById('rsvpPrompt').style.display = 'none';
       if (coming) {
@@ -379,6 +554,139 @@
       document.getElementById('rsvpDecline').style.display = 'none';
       document.getElementById('rsvpYesContent').style.display = 'none';
     }
+
+    // ── Pool toggle ───────────────────────────────────────────────────────────
+    var poolChoice = null;
+
+    function setPool(val) {
+      poolChoice = val;
+      document.querySelectorAll('.pool-toggle').forEach(function(btn) {
+        btn.classList.toggle('active', btn.dataset.val === val);
+      });
+      renderNameFields();
+    }
+
+    function renderNameFields() {
+      var adults = Math.max(1, parseInt(document.getElementById('adultsCount').value) || 1);
+      var kids   = Math.max(0, parseInt(document.getElementById('kidsCount').value)   || 0);
+      var container = document.getElementById('nameFields');
+
+      if (poolChoice === 'yes') {
+        var html = '';
+        for (var a = 1; a <= adults; a++) {
+          html += '<div class="form-field">'
+            + '<label class="form-label">Adult ' + a + ' name</label>'
+            + '<input type="text" class="form-input pool-name" placeholder="Full name">'
+            + '</div>';
+        }
+        for (var k = 1; k <= kids; k++) {
+          html += '<div class="form-field">'
+            + '<label class="form-label">Kid ' + k + ' name</label>'
+            + '<input type="text" class="form-input pool-name" placeholder="Full name">'
+            + '</div>';
+        }
+        container.innerHTML = html;
+      } else if (poolChoice === 'no') {
+        container.innerHTML = '<div class="form-field">'
+          + '<label class="form-label" for="rsvpName">Your name</label>'
+          + '<input type="text" id="rsvpName" class="form-input" placeholder="Full name">'
+          + '</div>';
+      } else {
+        container.innerHTML = '';
+      }
+    }
+
+    document.getElementById('adultsCount').addEventListener('input', renderNameFields);
+    document.getElementById('kidsCount').addEventListener('input', renderNameFields);
+
+    // ── Document ID resolution ────────────────────────────────────────────────
+    function resolveDocId(contact) {
+      if (contact) return contact.trim().toLowerCase();
+      var id = localStorage.getItem('rsvp_device_id');
+      if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem('rsvp_device_id', id);
+      }
+      return id;
+    }
+
+    // ── Form submission ───────────────────────────────────────────────────────
+    function showFormError(msg) {
+      var el = document.getElementById('formError');
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    document.getElementById('rsvpForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      document.getElementById('formError').style.display = 'none';
+
+      if (!poolChoice) {
+        showFormError('Please let us know if you\'ll be joining the pool.');
+        return;
+      }
+
+      var adults  = Math.max(1, parseInt(document.getElementById('adultsCount').value) || 1);
+      var kids    = Math.max(0, parseInt(document.getElementById('kidsCount').value)   || 0);
+      var contactRaw = document.getElementById('contactInput').value.trim();
+      var contact = contactRaw ? contactRaw.toLowerCase() : null;
+      var joiningPool = (poolChoice === 'yes');
+
+      var data = {
+        adultsCount: adults,
+        kidsCount: kids,
+        joiningPool: joiningPool,
+        submittedAt: firebase.firestore.FieldValue.serverTimestamp()
+      };
+
+      if (contact) {
+        data.contact = contact;
+      } else {
+        var uuid = localStorage.getItem('rsvp_device_id') || crypto.randomUUID();
+        localStorage.setItem('rsvp_device_id', uuid);
+        data.contact = null;
+        data.deviceId = uuid;
+      }
+
+      if (joiningPool) {
+        var nameInputs = document.querySelectorAll('.pool-name');
+        var poolNames = [];
+        var allFilled = true;
+        nameInputs.forEach(function(inp) {
+          if (!inp.value.trim()) allFilled = false;
+          poolNames.push(inp.value.trim());
+        });
+        if (!allFilled) {
+          showFormError('Please enter a name for each person joining the pool.');
+          return;
+        }
+        data.poolNames = poolNames;
+      } else {
+        var nameEl = document.getElementById('rsvpName');
+        if (!nameEl || !nameEl.value.trim()) {
+          showFormError('Please enter your name.');
+          return;
+        }
+        data.rsvpName = nameEl.value.trim();
+      }
+
+      var docId = resolveDocId(contact);
+      var submitBtn = document.querySelector('.rsvp-form-submit');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Sending…';
+
+      db.collection('vee-first-birthday-rsvps').doc(docId).set(data)
+        .then(function() {
+          document.getElementById('rsvpForm').style.display = 'none';
+          document.getElementById('rsvpThankYou').style.display = 'block';
+        })
+        .catch(function(err) {
+          console.error(err);
+          showFormError('Something went wrong — please try again.');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Send RSVP';
+        });
+    });
   </script>
 
 </body>
